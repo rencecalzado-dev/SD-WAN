@@ -1,0 +1,185 @@
+burger icon --> Configuration --> Certificates -send to controller
+Go to EVE|Topology
+Power on PKI server
+	
+	!NOTE!
+	WAIT FOR 10 MINS
+	
+!@PKI server:
+	conf t
+	crypto pki export rivapki pem terminal
+	!copy CA 
+
+% CA certificate:
+-----BEGIN CERTIFICATE-----
+MIIDIDCCAgigAwIBAgIBATANBgkqhkiG9w0BAQsFADAhMR8wHQYDVQQDExZyb290
+Y2EuUklWQU5DT1JQLmxvY2FsMB4XDTI2MDExODE5MDIxMloXDTI5MDExNzE5MDIx
+MlowITEfMB0GA1UEAxMWcm9vdGNhLlJJVkFOQ09SUC5sb2NhbDCCASIwDQYJKoZI
+hvcNAQEBBQADggEPADCCAQoCggEBANHmliLVoDJpoP/QYY9BYNoM5nYmqHTiWrcz
+/edesixyK6l4a5e4sFVjFnUxf/+1ND4FIUE3zsDDJEtvmiziO+/ObM+e34uSvQKU
+UoLIsUC96LQ+uwSrcWlA+0EYb9x+uHj1+sKKFE1n2paWcWHYxyy4Fdg0h/8vV4jJ
+/yLvPrsI0Tp8HvZBMiNQmZihliNc9eiBToeWci3FkIbpoylOsih+Pt9gAjHisJpJ
+2mATA0xcz5dt0DHM49zyIYUm4/F8i/NehDi98RanANgBlFVHHdIrcikAtqKq2usg
+iTtxqfRDGfinEp7N2lQcflQmwkwrGrfpTC4FX5+QLtVRst//560CAwEAAaNjMGEw
+DwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAYYwHwYDVR0jBBgwFoAUWTJM
+3TFjBLb5mucfAOAjH+36gPQwHQYDVR0OBBYEFFkyTN0xYwS2+ZrnHwDgIx/t+oD0
+MA0GCSqGSIb3DQEBCwUAA4IBAQA3f/bSd3vrB6u5F6nKMufwPoxVkRAnrTba1Ss+
+jvnjJIZ0MbXnZdHaJyZM6Lof58HRE66Kg8sYeyd+VRHthSjR+rBGfqovUqm0mTeS
+4NdwngebSbP/zrZKNsu7o/dazfJOdnNBrSqrWKoDliwXdtfrwWbei6/swX4WBVEF
+EthIAgr2uvKKbKJleBk9j5spAz9JS9nAI2nJ0D/scFbpxcxHtjuNSypGxbvUA6E8
+CihCAdhQxaGsO00S598LTCgtQepq3A0o39ER1u7L2Qa19lZXKr7jVVs7MTJlnXZo
+dVb5NArbTAGGmpvcr8FdxjMN8LPBvD9a22GpnHUkZJxI1iah
+-----END CERTIFICATE-----
+
+!@vedge-Mindanao Cisco:
+vshell
+cd /home/admin/
+ls
+cd pkicerts/
+vi rivan.ca
+	!double enter!
+	!press i!
+	!copy ca pki server and paste!
+	!press esc!
+	:wq
+	ls
+exit
+
+request root-cert-chain install /home/admin/pkicerts/rivan.ca 
+
+generate a CSR:
+request csr upload /home/admin/pkicerts/min.csr
+
+Enter organization-unit name : RIVANCORP
+Re-enter organization-unit name : RIVANCORP
+
+vshell
+cat /home/admin/pkicerts/min.csr 
+
+!copy CA request
+
+-----BEGIN CERTIFICATE REQUEST-----
+MIIDSTCCAjECAQAwgcgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlh
+MREwDwYDVQQHEwhTYW4gSm9zZTESMBAGA1UECxMJUklWQU5DT1JQMRYwFAYDVQQK
+Ew1DaXNjbyBTeXN0ZW1zMUEwPwYDVQQDEzh2ZWRnZS01ZjRiZTE3Yi04ZTZhLTQ2
+YWUtOTQ2Ny0zNWIyNmY1ZDU2OWEtMS52aXB0ZWxhLmNvbTEiMCAGCSqGSIb3DQEJ
+ARYTc3VwcG9ydEB2aXB0ZWxhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBAKDZHbxLY/sNb33mh0NkY1Empr2om9foe3QHOr8RCO2ID+ansVjgcSG+
+oCdNJDf0tFdL1ErfR5sKAbDe6PXkMdW8JP1V7wiIKZL/61hA65PkWDsu7Q9dqYF+
+P9EP1biclCgAiI0h4sZzGmRUHNlHnpVdXcCNOS27Bbma7TauPP9hSofWHgvS/FXz
+MPI598m5xdxfkocabypD0oMAMi/4fPZW376oo69a5K8RriLTO5MmonAM3kaXqXBe
+qk8NJJa7fTRmEg+LPWM3TlvCjUVBDISvEmtir8ii85y0rGdeVdgu9aOqoTHW3Vh9
+BuuAMnPXPP41QFuZM+JFMepUVShw3esCAwEAAaA7MDkGCSqGSIb3DQEJDjEsMCow
+CQYDVR0TBAIwADAdBgNVHQ4EFgQUeQ5dIVNA4/yP5NmdoCB5KKPDdbowDQYJKoZI
+hvcNAQELBQADggEBACDXNqERcp0Z2d2d0rw+CEujlZ02cNCb2ZO7Ftg2OwAig29I
+Sk6Mi1GmhR2Yc2+oyYPv/1XP8VjaatM0RUQNTZSMy9VxtwRKKhauYCzfPlxYZDjh
+3OlZy5V6ht89KZ0eEDMsOSmdxB03gUpVnzuahCzeqM5eHqjE12g6QnAoL4SOAkBe
+OLdXlc7Jlt4xROjulpu6MARHUh8V3pvuGVcNohEMWk7/2AsBfJxdmjUpoYEWGFHD
+Y9oYpWL/B2omrFlYdwYFPRoL5fErBEbteduC9XTKhFwRdAHfg6pRw0kct0pFbs3G
+6lsqAsj2fMgoFnRQLYx6sfIX7fX+oxU+duG86hQ=
+-----END CERTIFICATE REQUEST-----
+
+
+
+optional:
+cd /home/admin/pkicerts/
+openssl x509 -in rivan.ca -text -noout
+
+!@pki-server:
+crypto pki server rivanpki request pkcs10 terminal 
+
+!paste CERTIFICATE REQUEST!
+!copy GRANTED CERTIFICATE!
+
+% Granted certificate:
+-----BEGIN CERTIFICATE-----
+MIIDuDCCAqCgAwIBAgIBBzANBgkqhkiG9w0BAQsFADAhMR8wHQYDVQQDExZyb290
+Y2EuUklWQU5DT1JQLmxvY2FsMB4XDTI2MDkxNTE0NTYzOFoXDTI3MDkxNTE0NTYz
+OFowgcgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMREwDwYDVQQH
+EwhTYW4gSm9zZTESMBAGA1UECxMJUklWQU5DT1JQMRYwFAYDVQQKEw1DaXNjbyBT
+eXN0ZW1zMUEwPwYDVQQDEzh2ZWRnZS01ZjRiZTE3Yi04ZTZhLTQ2YWUtOTQ2Ny0z
+NWIyNmY1ZDU2OWEtMS52aXB0ZWxhLmNvbTEiMCAGCSqGSIb3DQEJARYTc3VwcG9y
+dEB2aXB0ZWxhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKDZ
+HbxLY/sNb33mh0NkY1Empr2om9foe3QHOr8RCO2ID+ansVjgcSG+oCdNJDf0tFdL
+1ErfR5sKAbDe6PXkMdW8JP1V7wiIKZL/61hA65PkWDsu7Q9dqYF+P9EP1biclCgA
+iI0h4sZzGmRUHNlHnpVdXcCNOS27Bbma7TauPP9hSofWHgvS/FXzMPI598m5xdxf
+kocabypD0oMAMi/4fPZW376oo69a5K8RriLTO5MmonAM3kaXqXBeqk8NJJa7fTRm
+Eg+LPWM3TlvCjUVBDISvEmtir8ii85y0rGdeVdgu9aOqoTHW3Vh9BuuAMnPXPP41
+QFuZM+JFMepUVShw3esCAwEAAaNTMFEwDwYDVR0TAQH/BAUwAwEB/zAfBgNVHSME
+GDAWgBRZMkzdMWMEtvma5x8A4CMf7fqA9DAdBgNVHQ4EFgQUeQ5dIVNA4/yP5Nmd
+oCB5KKPDdbowDQYJKoZIhvcNAQELBQADggEBABwIyUQvhqx9BZLA2hsgIVeSM+eT
+dOM6U1g7T/MkDqMCCsu3/sy2mthJyN+qHrQFQooEXUDfIaJ6p+f0dPtAWLdK5yGd
+fTN3OgPuqzvZxVAXHksALhDZ3x+7jCTFYgWvqNmA5kYVqFvQfji0Z4w2mTlrnNO4
+D7fzIye25lWNJ2Z2UR2g2syYmw0ZiQinqrytRI3ZT+5EMNVAK+4LTtDZbFFdtW11
+xbE5WSUJlQBosL8UvXK7qg/UfYRTfmJsD0StXdn/fLftrSM4Xw0DAYEz/sEEN/YE
+q0cqyWHgH5GNL3BrcSVDQ+T55i7qaOAtqpH5NooTZ7hqd7uBi+WfKoEshUY=
+-----END CERTIFICATE-----
+
+vedge-mindanao cisco:
+vshell
+cd /home/admin/pkicerts/
+vi grant.ca
+!double enter!
+!press i!
+!copy granted ca and paste!
+!press esc!
+:wq
+ls
+exit
+
+vedge-mindanao cisco:
+request certificate install /home/admin/pkicerts/grant.ca
+show certificate serial
+Chassis number: 5f4be17b-8e6a-46ae-9467-35b26f5d569a serial number: 07
+
+vmanage & vbond:
+
+request vedge add chassis-num 5f4be17b-8e6a-46ae-9467-35b26f5d569a serial-num 07
+
+!optional!
+vsmart:
+
+request vedge delete chassis-num 5f4be17b-8e6a-46ae-9467-35b26f5d569a serial-num 07
+
+burger icon --> configuration --> send to controller
+
+
+!output!
+CSW mindanao:
+
+conf t
+ hostname CSW-MINDANAO
+ enable secret pass
+ service password-encryption
+ no logging console
+ no ip domain lookup
+ username admin priv 15 secret pass
+ line vty 0 14
+  transport input all
+  password pass
+  login local
+  exec-timeout 0 0
+ int lo0
+  ip add 3.3.3.3 255.255.255.255
+  exit
+ int g0/0
+  no sw
+  ip add 172.16.9.2 255.255.255.252
+  no shut
+ int g0/1
+  no sw
+  ip add 10.1.3.2 255.255.255.252
+  no shut
+ router ospf 1
+  router-id 3.3.3.3
+  network 172.16.9.0 0.0.0.3 area 0
+  network 3.3.3.3 0.0.0.0 area 0
+  network 10.1.3.0 0.0.0.3 area 0
+  passive-interface lo0
+  end
+  
+  
+burger icon --> configuration --> template --> device template
+--> attach device --> attach vedge mindanao
+
+ping 1.1.1.1
