@@ -50,7 +50,7 @@ All controllers use organization name `RIVANCORP` and site ID `10`.
 2. Sign in:
 
    ```text
-   Username: root
+   Username: Rivan
    Password: C1sc0123
    ```
 
