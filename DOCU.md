@@ -285,3 +285,315 @@ URL: https://10.69.255.13:8443
 | Hostname          | Device Specific             |
 | Console Baud Rate | Global, 9600                |
 ---
+### STEP 1 - Configure Templates for VPN1
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN`
+
+~~~
+Name: VE-VPN1
+Desc: VE-VPN1
+
+VPN: 1
+NAME: DATA VPN
+
+IPv4 Route: 
+  Prefix: 0.0.0.0/0
+  Gateway: VPN
+  Enable VPN: On
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 2 - Configure Templates VPN1 Interface [MODIFY]  - OPTIONAL
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > MODIFY `VE-VPNINT-VPN0GIG00`
+
+~~~
+Name: Retain
+Desc: Retain
+
+Shutdown: No
+Name: ge0/0
+Description: LAN INTERFACE
+
+Ipv4 Address: Device Specific
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 3 - Configure Templates for OSPF 
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `OSPF`
+
+~~~
+Name: VE-OSPF-VPN1
+Desc: VE-OSPF-VPN1
+
+Redistribute:
+  Protocol: omp
+
+Area:
+  Area Num: 0
+  Interface:
+    Interface Name: ge0/0
+	
+	ADD x2
+
+Advance:
+  Originate: On
+  Always: On
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 4 - Update VE-TEMP (Device Template)
+
+~~~
+Service VPN:
+  Add VPN: VE-VPN1
+    OSPF: VE-OSPF-VPN1
+	VPN Interface: VE-VPNINT-VPN0-GIG00
+
+Remove GIG00 From VPN 0
+
+Assign G0/0 With the IP based on the topology
+
+~~~
+### STEP 5 - Configure BGP on CLOUD to establish connection with controllers
+~~~
+!@Cloud (BGP Config)
+conf t
+ int lo8
+  ip add 8.8.8.8 255.255.255.255
+ router bgp 1
+  bgp log-neighbor-changes
+  neighbor 192.168.20.1 remote-as 100
+  neighbor 192.168.20.5 remote-as 100
+  neighbor 192.168.20.9 remote-as 100
+  address-family ipv4
+   neighbor 192.168.20.1 activate
+   neighbor 192.168.20.5 activate
+   neighbor 192.168.20.9 activate
+   neighbor 192.168.20.1 as-override
+   neighbor 192.168.20.5 as-override
+   neighbor 192.168.20.9 as-override
+   network 8.8.8.8 mask 255.255.255.255
+   network 192.168.20.0 mask 255.255.255.0
+   network 172.16.10.0 mask 255.255.255.248
+   network 10.69.255.0 mask 255.255.255.248
+   end
+~~~
+### STEP 6 - Return to the vManage GUI then send the vEDGE list to all controllers
+
+`Configuration` > `Certificates` > `Send to Controllers`
+
+
+### STEP 7 - Configure Templates for SYSTEM
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `System`
+
+~~~
+Name: VE-SYSTEM
+Desc: VE-SYSTEM
+
+Console Baud Rate(bps): 9600
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 8 - Configure Templates for BANNER
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `Banner`
+
+~~~
+Name: VE-BANNER
+Desc: VE-BANNER
+
+Login Banner: Welcome to RIVANCORP
+MOTD Banner: Property owned by RIVANCORP
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 9 - Configure Templates for VPN0
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN`
+
+~~~
+Name: VE-VPN0
+Desc: VE-VPN0
+
+VPN: 0
+Name: TRANSPORT VPN
+
+Ipv4 Route:
+  Prefix: 0.0.0.0/0
+  Gateway: NextHop
+  Add Next Hop:
+    Address: Device Specific
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 10 - Configure Templates for VPN512
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN`
+
+~~~
+Name: VE-VPN512
+Desc: VE-VPN512
+
+VPN: 512
+Name: MANAGEMENT VPN
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 11 - Configure Templates for Interface IP address (VPN512)
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN Interface Ethernet`
+
+~~~
+Name: VE-VPNINT-VPN512-ETH0
+Desc: VE-VPNINT-VPN512-ETH0
+
+Shutdown: No
+Interface Name: eth0
+Description: MANAGEMENT INTERFACE
+
+IPv4Add: Default
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 12 - Configure Templates for Interface IP address (VPN0-G0/1)
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN Interface Ethernet`
+
+~~~
+Name: VE-VPNINT-VPN0-GIG01
+Desc: VE-VPNINT-VPN0-GIG01
+
+Shutdown: No
+Interface Name: ge0/1
+Description: TRANSPORT INTERFACE
+
+IPv4Add: Device Specific
+
+Tunnel Interface: On
+Color: BIZ-INTERNET
+
+Allow Service: All, NETCONF, SSH, BGP
+NAT: On
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 13 - Configure Templates for Interface IP address (VPN0-G0/0)
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `VPN Interface Ethernet`
+
+~~~
+Name: VE-VPNINT-VPN0-GIG00
+Desc: VE-VPNINT-VPN0-GIG00
+
+Shutdown: No
+Interface Name: ge0/0
+Description: LAN INTERFACE
+
+IPv4Add: Device Specific
+
+Tunnel Interface: On
+Color: Private1
+Restrict: On
+Allow Service: All, NETCONF, SSH, OSPF
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 14 - Configure Templates for BGP
+
+`Configuration` > `Templates` > `Feature Templates` > `vEdge Cloud` > `BGP`
+
+~~~
+Name: VE-BGP-VPN0
+Desc: VE-BGP-VPN0
+
+Shutdown: No
+AS Number: Global 100
+
+Neigbor:
+  Address: 192.168.20.6
+  Remote AS: 1
+  Address Family: On
+    Address Family: IPv4 Unicast
+	Shutdown: No
+~~~
+
+
+&nbsp;
+---
+&nbsp;
+
+
+### STEP 15 - Configure Device Templates
+
+~~~
+Device Model: vEdge Cloud
+Device Role: SDWAN Edge
+Template Name: VE-TEMP
+Desc: VE-TEMP
+
+Basic Info:
+  System: VE-SYSTEM
+ 
+Transport & Management VPN:
+  VPN0: VE-VPN0
+  Add: 
+    BGP: VE-BGP-VPN0
+	VPN Interface: VE-VPNINT-VPN0-GIG00
+	VPN Interface: VE-VPNINT-VPN0-GIG01
+  
+  VPN512: VE-VPN512
+  VPN Interface: VE-VPNINT-VPN512-ETH1
+~~~
