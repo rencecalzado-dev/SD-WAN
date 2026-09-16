@@ -220,6 +220,8 @@ end
 Open the **Cloud router console** and enter:
 
 ```text
+enable
+pass
 configure terminal
  interface loopback8
   ip address 8.8.8.8 255.255.255.255
@@ -354,6 +356,8 @@ You should now have:
 - Started both vEdge routers.
 - Sent the controller list successfully.
 - Begun the `VE-SYSTEM` feature template.
+
+
 
 The source material ends here. Additional instructions are needed to configure the remaining vEdge features, build and attach a device template, and verify control connections and data-plane traffic.
 
