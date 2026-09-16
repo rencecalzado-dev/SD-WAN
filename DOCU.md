@@ -597,3 +597,8 @@ Transport & Management VPN:
   VPN512: VE-VPN512
   VPN Interface: VE-VPNINT-VPN512-ETH1
 ~~~
+<img width="950" height="494" alt="image" src="https://github.com/user-attachments/assets/90fdd7b6-587c-47c7-9a60-084bbfd9d13e" />
+attachments/assets/5fb857be-7a05-477e-8efc-e537d105d296" />
+
+
+![Uploading image.png…]()
